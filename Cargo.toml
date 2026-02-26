@@ -1,0 +1,18 @@
+[package]
+name = "auria-execution"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+repository = "https://github.com/auria-core/auria-runtime"
+authors = ["AURIA Team <auria@dust.llc>"]
+description = "AURIA Runtime Core - Expert assembly and execution pipeline"
+
+[dependencies]
+auria-core = { path = "../auria-core", version = "0.1.0"}
+auria-router = { path = "../auria-router", version = "0.1.0"}
+auria-storage = { path = "../auria-storage", version = "0.1.0"}
+auria-license = { path = "../auria-license", version = "0.1.0"}
+anyhow = "1.0"
+thiserror = "1.0"
+async-trait = "0.1"
+tokio = { version = "1.35", features = ["rt-multi-thread", "macros", "time", "signal"] }
