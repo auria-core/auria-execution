@@ -1,3 +1,10 @@
+// File: lib.rs - This file is part of AURIA
+// Copyright (c) 2026 AURIA Developers and Contributors
+// Description:
+//     Expert assembly and execution pipeline for AURIA Runtime Core.
+//     Implements the core execution engine that orchestrates expert assembly
+//     and forward pass execution across different hardware backends.
+//
 use auria_core::{ExecutionOutput, ExecutionState, RoutingDecision, Tensor, AuriaResult};
 use async_trait::async_trait;
 
