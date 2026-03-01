@@ -9,6 +9,7 @@ description = "AURIA Runtime Core - Expert assembly and execution pipeline"
 
 [dependencies]
 auria-core = { path = "../auria-core", version = "0.1.0"}
+auria-tensor = { path = "../auria-tensor", version = "0.1.0"}
 auria-router = { path = "../auria-router", version = "0.1.0"}
 auria-storage = { path = "../auria-storage", version = "0.1.0"}
 auria-license = { path = "../auria-license", version = "0.1.0"}
