@@ -6,20 +6,29 @@
 //     from shards and forward pass execution across different hardware backends.
 //
 use auria_core::{
-    AuriaError, AuriaResult, ExecutionOutput, ExecutionState, ExpertId,
-    RoutingDecision, Shard, ShardId, Tensor, TensorDType, Tier,
+    AuriaError, AuriaResult, ExpertId,
+    RoutingDecision, Shard, ShardId, Tensor, TensorDType, Tier, UsageStats,
 };
 use auria_tensor::{
-    activation::{gelu, relu, softmax},
     attention::{multihead_attention, AttentionConfig},
     convert::{convert_fp16_to_fp32, convert_fp32_to_fp16},
-    matmul::matmul,
     normalization::rms_norm,
 };
 use async_trait::async_trait;
-use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
+
+#[derive(Debug, Clone)]
+pub struct ExecutionState {
+    pub position: usize,
+    pub kv_cache: Vec<Tensor>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ExecutionOutput {
+    pub tokens: Vec<String>,
+    pub usage: UsageStats,
+}
 
 #[async_trait]
 pub trait ExecutionBackend: Send + Sync {
@@ -109,7 +118,7 @@ impl<S: ShardStorage + Send + Sync> ExpertAssembler<S> {
         let shards = self.storage.get_shards_for_expert(expert_id).await?;
         
         if shards.is_empty() {
-            return Err(AuriaError::ExpertNotFound(ExpertId(expert_id.0)));
+            return Err(AuriaError::ExpertNotFound(expert_id.0));
         }
 
         self.combine_shards(&shards)
@@ -198,7 +207,7 @@ impl<B: ExecutionBackend, S: ShardStorage + Send + Sync> ExecutionPipeline<B, S>
                 expert_tensors.push(cached);
             } else {
                 let tensor = self.assembler.assemble_expert(expert_id).await?;
-                self.cache_expert(*expert_id, tensor.clone()).await;
+                self.cache_expert(expert_id.clone(), tensor.clone()).await;
                 expert_tensors.push(tensor);
             }
         }
@@ -242,8 +251,9 @@ impl<B: ExecutionBackend, S: ShardStorage + Send + Sync> ExecutionPipeline<B, S>
         
         Ok(ExecutionOutput {
             tokens,
-            usage: auria_core::UsageStats {
+            usage: UsageStats {
                 tokens_generated: 1,
+                tokens_processed: 1,
             },
         })
     }
