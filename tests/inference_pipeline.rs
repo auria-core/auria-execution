@@ -30,7 +30,7 @@ async fn test_execution_engine_creation() {
         ) -> AuriaResult<ExecutionOutput> {
             Ok(ExecutionOutput {
                 tokens: vec!["test".to_string()],
-                usage: UsageStats { tokens_generated: 1 },
+                usage: UsageStats { tokens_generated: 1, tokens_processed: 1 },
             })
         }
         
