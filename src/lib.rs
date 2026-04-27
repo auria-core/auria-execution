@@ -11,7 +11,7 @@ use auria_core::{
 };
 use auria_tensor::{
     attention::{multihead_attention, AttentionConfig},
-    convert::{convert_fp16_to_fp32, convert_fp32_to_fp16},
+    convert::convert_fp16_to_fp32,
     normalization::rms_norm,
 };
 use async_trait::async_trait;
@@ -59,7 +59,7 @@ impl<B: ExecutionBackend> ExecutionEngine<B> {
     pub async fn execute(
         &self,
         input: Tensor,
-        routing: RoutingDecision,
+        _routing: RoutingDecision,
         state: ExecutionState,
     ) -> AuriaResult<ExecutionOutput> {
         self.backend.execute_step(input, Vec::new(), state).await
@@ -219,7 +219,7 @@ impl<B: ExecutionBackend, S: ShardStorage + Send + Sync> ExecutionPipeline<B, S>
         &self,
         input: Tensor,
         expert_outputs: Vec<Tensor>,
-        routing: &RoutingDecision,
+        _routing: &RoutingDecision,
         state: &mut ExecutionState,
     ) -> AuriaResult<ExecutionOutput> {
         let input_f32 = tensor_to_f32(&input)?;
@@ -283,7 +283,7 @@ impl<B: ExecutionBackend, S: ShardStorage + Send + Sync> ExecutionPipeline<B, S>
     }
 
     fn compute_qkv(&self, hidden: &[f32], hidden_size: usize) -> AuriaResult<(Vec<f32>, Vec<f32>, Vec<f32>)> {
-        let head_dim = hidden_size / 8;
+        let _head_dim = hidden_size / 8;
         let q = hidden.to_vec();
         let k = hidden.to_vec();
         let v = hidden.to_vec();
